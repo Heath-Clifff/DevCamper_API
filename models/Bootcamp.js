@@ -28,7 +28,7 @@ const BootcampSchema = new mongoose.Schema({
   email: {
     type: String,
     match: [
-      /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,6}$/,
+      /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
       'Please enter a valid email',
     ],
   },
@@ -36,25 +36,25 @@ const BootcampSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Please enter the address'],
   },
-  location: {
-    // GeoJSON Point
-    type: {
-      type: String,
-      enum: ['Point'],
-      required: true,
-    },
-    coordinates: {
-      type: [Number],
-      required: true,
-      index: '2dsphere',
-    },
-    formattedAddress: String,
-    street: String,
-    city: String,
-    state: String,
-    zipcode: String,
-    country: String,
-  },
+  // location: {
+  //   // GeoJSON Point
+  //   type: {
+  //     type: String,
+  //     enum: ['Point'],
+  //     required: true,
+  //   },
+  //   coordinates: {
+  //     type: [Number],
+  //     required: true,
+  //     index: '2dsphere',
+  //   },
+  //   formattedAddress: String,
+  //   street: String,
+  //   city: String,
+  //   state: String,
+  //   zipcode: String,
+  //   country: String,
+  // },
   careers: {
     // Array of Strings
     type: [String],
@@ -99,3 +99,5 @@ const BootcampSchema = new mongoose.Schema({
     default: Date.now,
   },
 });
+
+module.exports = mongoose.model('Bootcamps', BootcampSchema);
