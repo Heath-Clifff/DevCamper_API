@@ -1,3 +1,5 @@
+const fileupload = require('express-fileupload');
+const path = require('path');
 const express = require('express');
 const dotenv = require('dotenv');
 const morgan = require('morgan');
@@ -19,10 +21,16 @@ const app = express();
 // Body Parser
 app.use(express.json());
 
+// Static files
+app.use(express.static(path.join(__dirname, 'public')));
+
 // Logging middle middleware
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
+
+// File uploading
+app.use(fileupload());
 
 // Mount the routes
 app.use('/api/v1/bootcamps', bootcamps);
