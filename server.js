@@ -15,6 +15,7 @@ connectDB();
 // Load routes
 const bootcamps = require('./routes/bootcamps');
 const courses = require('./routes/courses');
+const auth = require('./routes/auth');
 
 const app = express();
 
@@ -35,6 +36,7 @@ app.use(fileupload());
 // Mount the routes
 app.use('/api/v1/bootcamps', bootcamps);
 app.use('/api/v1/courses', courses);
+app.use('/api/v1/auth', auth);
 
 // Error Handler
 app.use(errorHandler);
