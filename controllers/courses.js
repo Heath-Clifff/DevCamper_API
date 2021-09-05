@@ -42,6 +42,7 @@ exports.getCourse = asyncHandler(async (req, res, next) => {
 
 exports.addCourse = asyncHandler(async (req, res, next) => {
   req.body.bootcamp = req.params.bootcampId;
+  req.body.user = req.user.id;
 
   const bootcamp = await Bootcamp.findById(req.params.bootcampId);
 
@@ -50,6 +51,16 @@ exports.addCourse = asyncHandler(async (req, res, next) => {
       new ErrorResponse(
         `No bootcamp found with the id ${req.params.bootcampId}`,
         404
+      )
+    );
+  }
+
+  // Check to see if user holds the ownership of bootcamp
+  if (bootcamp.user.toString() !== req.user.id && req.user.role !== 'admin') {
+    return next(
+      new ErrorResponse(
+        `User is unauthorized to add a course in the bootcamp`,
+        403
       )
     );
   }
@@ -71,6 +82,13 @@ exports.updateCourse = asyncHandler(async (req, res, next) => {
     );
   }
 
+  // Check to see if user holds the ownership of course
+  if (course.user.toString() !== req.user.id && req.user.role !== 'admin') {
+    return next(
+      new ErrorResponse(`User is unauthorized to update the course`, 403)
+    );
+  }
+
   course = await Course.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
     runValidators: true,
@@ -89,6 +107,13 @@ exports.deleteCourse = asyncHandler(async (req, res, next) => {
   if (!course) {
     return next(
       new ErrorResponse(`No course found with the id ${req.params.id}`)
+    );
+  }
+
+  // Check to see if user holds the ownership of course
+  if (course.user.toString() !== req.user.id && req.user.role !== 'admin') {
+    return next(
+      new ErrorResponse(`User is unauthorized to update the course`, 403)
     );
   }
 

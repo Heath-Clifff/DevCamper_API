@@ -6,10 +6,15 @@ const ErrorResponse = require('../utils/errorResponse');
 // @route     POST /api/v1/auth/register
 // @access    Public
 exports.register = asyncHandler(async (req, res, next) => {
-  const user = await User.create(req.body);
+  const { name, email, password, role } = req.body;
+  const user = await User.create({
+    name,
+    email,
+    password,
+    role,
+  });
 
-  const token = user.getSignedJwtToken();
-  res.status(200).json({ success: true, token });
+  sendTokenResponse(user, 200, res);
 });
 
 // @desc      User login
@@ -37,6 +42,33 @@ exports.login = asyncHandler(async (req, res, next) => {
     return next(new ErrorResponse(`Invalid Credentials`, 401));
   }
 
-  const token = user.getSignedJwtToken();
-  res.status(200).json({ success: true, token });
+  sendTokenResponse(user, 200, res);
+});
+
+// Get Token, create cookie, send response
+const sendTokenResponse = (model, statusCode, res) => {
+  const token = model.getSignedJwtToken();
+
+  options = {
+    expires: process.env.NODE_ENV_COOKIE_EXPIRE,
+    httpOnly: true,
+  };
+
+  if (process.env.NODE_ENV === 'production') {
+    options.secure = true;
+  }
+
+  res
+    .status(statusCode)
+    .cookie('token', token, options)
+    .json({ success: true, token });
+};
+
+// @desc      Get the logged in user
+// @route     POST /api/v1/auth/me
+// @access    Private
+exports.getMe = asyncHandler(async (req, res, next) => {
+  const user = await User.findById(req.user);
+
+  res.status(200).json({ success: true, user });
 });

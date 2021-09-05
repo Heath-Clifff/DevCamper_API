@@ -6,6 +6,7 @@ const morgan = require('morgan');
 const colors = require('colors');
 const errorHandler = require('./middleware/error');
 const connectDB = require('./config/db');
+const cookieParser = require('cookie-parser');
 
 // Load env vars
 dotenv.config({ path: './config/config.env' });
@@ -21,6 +22,7 @@ const app = express();
 
 // Body Parser
 app.use(express.json());
+app.use(cookieParser());
 
 // Static files
 app.use(express.static(path.join(__dirname, 'public')));
