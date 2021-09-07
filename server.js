@@ -7,9 +7,9 @@ const colors = require('colors');
 const errorHandler = require('./middleware/error');
 const connectDB = require('./config/db');
 const cookieParser = require('cookie-parser');
-const mongoSanitize = require('express-mongo-sanitize');
 const helmet = require('helmet');
 const xss = require('xss-clean');
+const mongoSanitize = require('express-mongo-sanitize');
 const rateLimit = require('express-rate-limit');
 const hpp = require('hpp');
 const cors = require('cors');
@@ -32,14 +32,14 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 
+// Prevent XSS attacks
+app.use(xss());
+
 // Sanitize Data
 app.use(mongoSanitize());
 
 // Security Headers
 app.use(helmet());
-
-// Prevent XSS attacks
-app.use(xss());
 
 // Rate Limiting
 const limiter = rateLimit({
