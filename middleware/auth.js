@@ -5,16 +5,18 @@ const ErrorResponse = require('../utils/errorResponse');
 
 exports.protect = asyncHandler(async (req, res, next) => {
   let token;
-
+  // Check for headers
   if (
     req.headers.authorization &&
     req.headers.authorization.startsWith('Bearer')
   ) {
     token = req.headers.authorization.split(' ')[1];
   }
-  //   else if (req.cookie.token) {
-  //     token = req.cookie.token;
-  //   }
+
+  // Check for cookies
+  if (req.cookies.token) {
+    token = req.cookies.token;
+  }
 
   if (!token) {
     return next(new ErrorResponse(`Not authorized to access this route`, 401));
